@@ -1,8 +1,8 @@
 ## Cucumber Viewport Logger Service for WebdriverIO
 
 This service adds the possibility to log your Cucumber steps and other debug info directly to your browser window in
-your WebriverIO-based solution. Especially useful it can be in cases using devices or virtual machines without direct *
-physical* access to them and the possibility to set up an interactive session for deep debugging your e2e tests.
+your WebriverIO-based solution. Especially useful it can be in cases using devices or virtual machines without direct 
+*physical* access to them and the possibility to set up an interactive session for deep debugging your e2e tests.
 
 ![demo](https://github.com/viktor-silakov/wdio-cucumber-viewport-logger-service/raw/main/img/demo.gif)
 
