@@ -1,6 +1,8 @@
 ## Cucumber Viewport Logger Service for WebdriverIO
 
-This service adds the possibility to log your Cucumber steps and other debug info directly to your browser window in your WebriverIO-based solution. Especially useful it can be in cases using devices or virtual machines without direct *physical* access to them and the possibility to set up an interactive session for deep debugging your e2e tests.
+This service adds the possibility to log your Cucumber steps and other debug info directly to your browser window in
+your WebriverIO-based solution. Especially useful it can be in cases using devices or virtual machines without direct *
+physical* access to them and the possibility to set up an interactive session for deep debugging your e2e tests.
 
 ![demo](https://github.com/viktor-silakov/wdio-cucumber-viewport-logger-service/raw/main/img/demo.gif)
 
@@ -46,6 +48,9 @@ exports.config = {
                     fontSize: '30px',
                     color: 'green',
                 },
+                closeButton: {
+                    color: 'red',
+                },
             },
         },]
     ]
@@ -55,11 +60,34 @@ exports.config = {
 
 ### API
 
-The service adds `logToViewport(message)` method to the `browser` object, you can use this in your step definitions
+> `logToViewport(message, styles)` - render custom message with custom CSS style (not mandatory), you can use this in your step definitions
 e.g.:
+>```js
+>When(/^I render message: "([^"]*)"$/, { timeout: 120000 }, function (message) {
+>    browser.logToViewport(message, { text: { color: 'green' } });
+>});
+>```
 
+
+> `removeViewportLogMessage()` - remove viewport messages section, can be useful for example to do a visual assertion
+
+### pointerEvents: 'none'
+
+By default, all mouse events (clicking, hovering, etc.) go through the message section, for example: instead of clicking on the message section  your click "pass" to the element next to the message (your app element), if you wish to change this behavior set wrapper style 'pointerEvents' option to 'auto', eq:
 ```js
-When(/^I render message: "([^"]*)"$/, { timeout: 120000 }, function (message) {
-    browser.logToViewport(message);
-});
+
+/ wdio.conf.js
+exports.config = {
+    // ...
+    services: [
+        ['cucumber-viewport-logger', {
+     
+            styles: {
+                wrapper: { pointerEvents: 'auto' },
+            },
+        },]
+    ]
+    // ...
+};
 ```
+

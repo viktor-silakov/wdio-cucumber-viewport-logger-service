@@ -1,4 +1,5 @@
 /* eslint-disable require-jsdoc */
+/* global document */
 const logger = require('@wdio/logger').default;
 const { renderDebugMsg } = require('./utils');
 const log = logger('wdio-cucumber-viewport-logger-service');
@@ -11,7 +12,7 @@ class ViewportLoggerService {
     // eslint-disable-next-line no-unused-vars
     constructor(serviceOptions, capabilities, config) {
         log.trace('constructor START');
-        log.debug(`service options: ${serviceOptions}`);
+        log.debug(`service options: ${JSON.stringify(serviceOptions, null, '\t')}`);
         this.options = serviceOptions;
         this.scenario = {};
         this.feature = {};
@@ -32,6 +33,13 @@ class ViewportLoggerService {
         if (this.options.enabled === false) {
             browser.addCommand(
                 'logToViewport',
+                (message) => {
+                    // dummy
+                }
+            );
+
+            browser.addCommand(
+                'removeViewportLogMessage',
                 (message) => {
                     // dummy
                 }
@@ -65,8 +73,17 @@ class ViewportLoggerService {
             browser.addCommand(
                 'logToViewport',
                 // eslint-disable-next-line arrow-body-style
+                (message, styles) => {
+                    renderDebugMsg(browser, { message, styles: styles || this.options.styles })
+                }
+            );
+            browser.addCommand(
+                'removeViewportLogMessage',
+                // eslint-disable-next-line arrow-body-style
                 (message) => {
-                    renderDebugMsg(browser, { message, styles: this.options.styles })
+                    browser.execute(() => {
+                        document.getElementsByTagName('wdio-debug-wrapper')[0].remove();
+                    })
                 }
             );
             log.trace('beforeScenario hook END');
@@ -82,6 +99,11 @@ class ViewportLoggerService {
                 'logToViewport',
                 // eslint-disable-next-line arrow-body-style
                 errMockFn
+            );
+
+            browser.addCommand(
+                'removeViewportLogMessage',
+                (_) => _
             );
 
             log.error(errMsg);
@@ -106,7 +128,7 @@ class ViewportLoggerService {
                 });
         } catch (e) {
             const errMsg = 'error in Cucumber Viewport Logger service,\n'
-                + ` beforeStep hook: '${e + (e.trace || '')}' read the logs`;
+                + ` beforeStep hook: '${e + e.stack || ''}'`;
             log.error(errMsg);
             throw new Error(errMsg);
         }
